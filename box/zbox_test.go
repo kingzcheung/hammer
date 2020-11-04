@@ -18,6 +18,16 @@ func Test_zbox_write(t *testing.T) {
 	}
 }
 
+func Test_zbox_write_file(t *testing.T) {
+	zbox := NewZbox("../testdata/dist/index.html")
+	zbox.SetNamePackage("hammer")
+	zbox.SetForceRemove(true)
+	err := zbox.write()
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func Test_zbox_SetNamePackage(t *testing.T) {
 	as := assert.New(t)
 	zb := NewZbox("")

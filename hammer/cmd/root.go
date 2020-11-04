@@ -10,6 +10,14 @@ import (
 
 var namePackage string
 
+const (
+	// fmt.Printf("\x1b[%d;%dmhello world \x1b[0m 46: 深绿 31: 红 \n", 46, 31)
+	green = "\x1b[32m"
+	red   = "\x1b[31m"
+)
+
+var force bool
+
 var rootCmd = &cobra.Command{
 	Use:   "hammer",
 	Short: "Simple tool to embed files in Go binary",
@@ -17,29 +25,33 @@ var rootCmd = &cobra.Command{
 		if len(args) == 0 {
 			return errors.New("please enter the directory to embed")
 		}
-		stat, err := os.Stat(args[0])
+		_, err := os.Stat(args[0])
 		if err != nil {
 			return err
 		}
-		if !stat.IsDir() {
-			return errors.Errorf("%s is not directory", args[0])
-		}
+		// if !stat.IsDir() {
+		// 	return errors.Errorf("%s is not directory", args[0])
+		// }
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		zbox := box.NewZbox(args[0])
+		zbox.SetForceRemove(force)
 		if namePackage != "" {
 			zbox.SetNamePackage(namePackage)
 		}
 		err := zbox.Hammer()
 		if err != nil {
-			fmt.Println(err)
+			fmt.Printf("%s%s\n", red, err.Error())
+			return
 		}
+		fmt.Printf("%sSuccess!\n", green)
 	},
 }
 
 func init() {
 	rootCmd.Flags().StringVarP(&namePackage, "package", "p", "", "The package name")
+	rootCmd.Flags().BoolVarP(&force, "force", "f", false, "Forced generation")
 }
 
 func Execute() {

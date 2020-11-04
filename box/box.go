@@ -96,6 +96,7 @@ func uzip(data string) (ServerFileSystem, error) {
 	}
 
 	bobj := new(box)
+
 	files := make(map[string]file, len(read.File))
 	for _, r := range read.File {
 		rc, err := r.Open()

@@ -19,6 +19,11 @@ type zbox struct {
 	bf          *bytes.Buffer
 	srcDir      string
 	namePackage string
+	forceRemove bool
+}
+
+func (z *zbox) SetForceRemove(forceRemove bool) {
+	z.forceRemove = forceRemove
 }
 
 func (z *zbox) SetNamePackage(namePackage string) {
@@ -62,7 +67,14 @@ func NewZbox(dir string) *zbox {
 func (z *zbox) mkdir() error {
 	b := pathExists(z.namePackage)
 	if b {
-		return errors.New("path exists")
+		if !z.forceRemove {
+			return errors.New("path exists")
+		}
+		err := os.RemoveAll(z.namePackage)
+
+		if err != nil {
+			return err
+		}
 	}
 	return os.MkdirAll(z.namePackage, 0755)
 }
@@ -75,6 +87,8 @@ func (z *zbox) write() error {
 
 	err := filepath.Walk(z.srcDir, func(path string, info os.FileInfo, err error) error {
 
+		path = filepath.ToSlash(path)
+
 		if info.IsDir() || strings.HasPrefix(info.Name(), ".") {
 			return nil
 		}
@@ -86,11 +100,18 @@ func (z *zbox) write() error {
 		}
 		fh.Method = zip.Deflate
 		// 需要记录文件相对于原始目录的相对目录
-		rel, err := filepath.Rel(z.srcDir, path)
-		if err != nil {
-			return err
+
+		var rel string
+		if z.srcDir != path {
+			rel, err = filepath.Rel(z.srcDir, path)
+			if err != nil {
+				return err
+			}
+		} else {
+			_, rel = filepath.Split(z.srcDir)
 		}
 		fh.Name = rel
+		fmt.Println(rel)
 		zc, err := z.zw.CreateHeader(fh)
 		if err != nil {
 			return err
@@ -133,8 +154,6 @@ import (
 	bf.Write(convertsBytes(z.bf.Bytes()))
 	bf.WriteString("\"\n")
 	bf.WriteString("func init() {box.ReadFromZipData(zipData);}\n")
-
-	fmt.Println("生成")
 
 	filename := fmt.Sprintf("%s/%s.go", z.namePackage, z.namePackage)
 	if err := ioutil.WriteFile(filename, bf.Bytes(), 0644); err != nil {

@@ -1,4 +1,7 @@
-#  hammer - a simple tool to embed files in Go binary
+#  hammer
+
+ hammer is a simple tool to embed files in Go binary.
+
 
 ## Installation
 
@@ -22,7 +25,7 @@ In CLI:
 hammer path/to/your/project/public
 ```
 
-In Your code,your need to import the generated package, and init hammer.
+In Your code,your need to import the generated package,  init hammer and serve.
 
 ```go
 import (
@@ -46,5 +49,46 @@ route.Use(func(c *gin.Context) {
 			c.Abort()
 		}
 	})
+```
+
+Or read the content of a single file:
+
+```go
+// dist
+// ├── css
+// │   └── about.a8f98c3c.css
+// ├── favicon.ico
+// ├── fonts
+// │   ├── element-icons.535877f5.woff
+// │   └── element-icons.732389de.ttf
+// ├── hammer
+// │   └── hammer.go
+// ├── img
+// │   ├── excel.fc9b920c.jpg
+// │   ├── gujia.846046c3.png
+// │   └── no_pic.bffd1360.png
+// ├── index.html
+// └── js
+//    ├── about.a793be22.js
+//    └── about.a793be22.js.map
+
+fs,err := hammer.New("/dist")
+if err != nil {
+  panic(err)
+}
+fs.Find("/index.html") //[]byte
+fs.FindString("/js/about.a793be22.js")//string
+```
+
+#### Hammer single file
+
+```
+$ hammer /path/to/single/file.html
+```
+
+You only  read the content by filename:
+
+```go
+fs.Find("/file.html")
 ```
 

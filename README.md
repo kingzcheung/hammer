@@ -53,6 +53,8 @@ route.Use(func(c *gin.Context) {
 
 Or read the content of a single file:
 
+> But does not support read directory!
+
 ```go
 // dist
 // ├── css

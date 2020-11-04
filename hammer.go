@@ -2,8 +2,6 @@ package hammer
 
 import (
 	"github.com/kingzcheung/hammer/box"
-	"io/ioutil"
-	"net/http"
 )
 
 func New(relativePath string) (box.ServerFileSystem, error) {
@@ -14,15 +12,10 @@ func Assets() (box.ServerFileSystem, error) {
 	return box.UzipFromNamespace(box.DefaultName)
 }
 
-func Bytes(fs http.FileSystem, file string) ([]byte, error) {
-	f, err := fs.Open(file)
-	if err != nil {
-		return nil, err
-	}
-	return ioutil.ReadAll(f)
+func Find(fs box.ServerFileSystem, file string) ([]byte, error) {
+	return fs.Find(file)
 }
 
-func Strings(fs http.FileSystem, file string) (string, error) {
-	f, err := Bytes(fs, file)
-	return string(f), err
+func FindString(fs box.ServerFileSystem, file string) (string, error) {
+	return fs.FindString(file)
 }

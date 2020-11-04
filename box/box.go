@@ -24,10 +24,12 @@ type ServerFileSystem interface {
 	http.FileSystem
 	Find(path string) ([]byte, error)
 	FindString(path string) (string, error)
+	Exist(path string) bool
 }
 
 type box struct {
-	files map[string]file
+	files     map[string]file
+	namespace string
 }
 
 func (b *box) Open(name string) (http.File, error) {
@@ -39,6 +41,14 @@ func (b *box) Open(name string) (http.File, error) {
 		return nil, ErrContOpenDir
 	}
 	return &httpFile{file: f, reader: bytes.NewReader(f.data)}, nil
+}
+func (b *box) Exist(path string) bool {
+	for filename, _ := range b.files {
+		if filename == path {
+			return true
+		}
+	}
+	return false
 }
 
 func (b *box) Bytes(file string) ([]byte, error) {
@@ -70,6 +80,7 @@ func ReadFromZipData(data string) {
 }
 
 func UzipFromNamespace(ns string) (ServerFileSystem, error) {
+
 	zdata, ok := zipdata[ns]
 	if !ok {
 		return nil, errors.New("zip data is null")

@@ -19,3 +19,7 @@ func Find(fs box.ServerFileSystem, file string) ([]byte, error) {
 func FindString(fs box.ServerFileSystem, file string) (string, error) {
 	return fs.FindString(file)
 }
+
+func Exist(fs box.ServerFileSystem, file string) bool {
+	return fs.Exist(file)
+}

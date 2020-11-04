@@ -6,7 +6,11 @@ import (
 	"net/http"
 )
 
-func New() (http.FileSystem, error) {
+func New(relativePath string) (box.ServerFileSystem, error) {
+	return box.UzipFromNamespace(relativePath)
+}
+
+func Assets() (box.ServerFileSystem, error) {
 	return box.UzipFromNamespace(box.DefaultName)
 }
 

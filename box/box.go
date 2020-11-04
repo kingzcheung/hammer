@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-const DefaultName = "default"
+const DefaultName = "assets"
 
 var ErrContOpenDir = errors.New("can not open dir")
 var zipdata = map[string]string{}
@@ -18,6 +18,12 @@ var zipdata = map[string]string{}
 type file struct {
 	os.FileInfo
 	data []byte
+}
+
+type ServerFileSystem interface {
+	http.FileSystem
+	Find(path string) ([]byte, error)
+	FindString(path string) (string, error)
 }
 
 type box struct {
@@ -43,6 +49,10 @@ func (b *box) Bytes(file string) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
+func (b *box) Find(path string) ([]byte, error) {
+	return b.Bytes(path)
+}
+
 func (b *box) Strings(file string) (string, error) {
 	b1, err := b.Bytes(file)
 	if err != nil {
@@ -51,11 +61,15 @@ func (b *box) Strings(file string) (string, error) {
 	return string(b1), nil
 }
 
+func (b *box) FindString(path string) (string, error) {
+	return b.Strings(path)
+}
+
 func ReadFromZipData(data string) {
 	zipdata[DefaultName] = data
 }
 
-func UzipFromNamespace(ns string) (http.FileSystem, error) {
+func UzipFromNamespace(ns string) (ServerFileSystem, error) {
 	zdata, ok := zipdata[ns]
 	if !ok {
 		return nil, errors.New("zip data is null")
@@ -63,7 +77,7 @@ func UzipFromNamespace(ns string) (http.FileSystem, error) {
 	return uzip(zdata)
 }
 
-func uzip(data string) (http.FileSystem, error) {
+func uzip(data string) (ServerFileSystem, error) {
 	dlen := int64(len(data))
 	read, err := zip.NewReader(strings.NewReader(data), dlen)
 	if err != nil {

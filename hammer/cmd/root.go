@@ -31,7 +31,10 @@ var rootCmd = &cobra.Command{
 		if namePackage != "" {
 			zbox.SetNamePackage(namePackage)
 		}
-		fmt.Println(zbox.Hammer())
+		err := zbox.Hammer()
+		if err != nil {
+			fmt.Println(err)
+		}
 	},
 }
 

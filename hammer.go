@@ -9,7 +9,7 @@ func New(relativePath string) (box.ServerFileSystem, error) {
 }
 
 func Assets() (box.ServerFileSystem, error) {
-	return box.UzipFromNamespace(box.DefaultName)
+	return box.UzipFromNamespace(box.DefaultNameSpace)
 }
 
 func Find(fs box.ServerFileSystem, file string) ([]byte, error) {

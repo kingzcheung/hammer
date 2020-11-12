@@ -150,10 +150,14 @@ import (
 )
 
 `)
-	bf.WriteString(`const zipData = "`)
+	bf.WriteString(`const zipMap = "`)
 	bf.Write(convertsBytes(z.bf.Bytes()))
 	bf.WriteString("\"\n")
-	bf.WriteString("func init() {box.ReadFromZipData(zipData);}\n")
+	bf.WriteString("func init() {box.ReadFromZipData(")
+	bf.WriteString("\"")
+	bf.WriteString(z.srcDir)
+	bf.WriteString("\"")
+	bf.WriteString(", zipMap);}\n")
 
 	filename := fmt.Sprintf("%s/%s.go", z.namePackage, z.namePackage)
 	if err := ioutil.WriteFile(filename, bf.Bytes(), 0644); err != nil {

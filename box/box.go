@@ -10,14 +10,18 @@ import (
 	"strings"
 )
 
-const DefaultName = "assets"
+const DefaultNameSpace = "assets"
 
 var ErrContOpenDir = errors.New("can not open dir")
-var zipdata = map[string]string{}
+var zipMap = map[string]string{}
 
 type file struct {
 	os.FileInfo
 	data []byte
+}
+
+func GetZipData() map[string]string {
+	return zipMap
 }
 
 type ServerFileSystem interface {
@@ -75,13 +79,13 @@ func (b *box) FindString(path string) (string, error) {
 	return b.Strings(path)
 }
 
-func ReadFromZipData(data string) {
-	zipdata[DefaultName] = data
+func ReadFromZipData(ns string, data string) {
+	zipMap[ns] = data
 }
 
 func UzipFromNamespace(ns string) (ServerFileSystem, error) {
 
-	zdata, ok := zipdata[ns]
+	zdata, ok := zipMap[ns]
 	if !ok {
 		return nil, errors.New("zip data is null")
 	}

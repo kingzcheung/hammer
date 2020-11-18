@@ -33,7 +33,7 @@ import (
 )
 
 // ...
-fs,_ := hammer.New("/public")
+fs,_ := hammer.New("public")
 http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(fs)))
 
 ```
@@ -74,7 +74,7 @@ Or read the content of a single file:
 //    ├── about.a793be22.js
 //    └── about.a793be22.js.map
 
-fs,err := hammer.New("/dist")
+fs,err := hammer.New("dist")
 if err != nil {
   panic(err)
 }

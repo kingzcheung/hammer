@@ -17,6 +17,7 @@ const (
 )
 
 var force bool
+var namespace string
 
 var rootCmd = &cobra.Command{
 	Use:   "hammer",
@@ -37,9 +38,14 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		zbox := box.NewZbox(args[0])
 		zbox.SetForceRemove(force)
+		var ns = args[0]
+		if namespace != "" {
+			ns = namespace
+		}
 		if namePackage != "" {
 			zbox.SetNamePackage(namePackage)
 		}
+		zbox.SetNamespace(ns)
 		err := zbox.Hammer()
 		if err != nil {
 			fmt.Printf("%s%s\n", red, err.Error())
@@ -51,6 +57,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.Flags().StringVarP(&namePackage, "package", "p", "", "The package name")
+	rootCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "The zip namespace")
 	rootCmd.Flags().BoolVarP(&force, "force", "f", false, "Forced generation")
 }
 

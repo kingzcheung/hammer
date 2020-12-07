@@ -20,6 +20,11 @@ type zbox struct {
 	srcDir      string
 	namePackage string
 	forceRemove bool
+	namespace   string
+}
+
+func (z *zbox) SetNamespace(name string) {
+	z.namespace = name
 }
 
 func (z *zbox) SetForceRemove(forceRemove bool) {
@@ -61,6 +66,7 @@ func NewZbox(dir string) *zbox {
 		zw:          zip.NewWriter(write),
 		srcDir:      dir,
 		namePackage: defaultNamePackage,
+		namespace:   dir,
 	}
 }
 
@@ -111,7 +117,7 @@ func (z *zbox) write() error {
 			_, rel = filepath.Split(z.srcDir)
 		}
 		fh.Name = rel
-		fmt.Println(rel)
+		fmt.Println("file::", rel)
 		zc, err := z.zw.CreateHeader(fh)
 		if err != nil {
 			return err
@@ -155,7 +161,7 @@ import (
 	bf.WriteString("\"\n")
 	bf.WriteString("func init() {box.ReadFromZipData(")
 	bf.WriteString("\"")
-	bf.WriteString(z.srcDir)
+	bf.WriteString(z.namespace)
 	bf.WriteString("\"")
 	bf.WriteString(", zipMap);}\n")
 

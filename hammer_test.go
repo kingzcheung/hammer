@@ -1,7 +1,7 @@
 package hammer
 
 import (
-	_ "github.com/kingzcheung/hammer/testdata/hammer"
+	// _ "github.com/kingzcheung/hammer/testdata/hammer"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"strings"

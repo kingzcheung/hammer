@@ -3,6 +3,8 @@
  hammer is a simple tool to embed files in Go binary.
 
 
+see [https://github.com/golang/go/issues/43407](https://github.com/golang/go/issues/43407)
+
 ## Installation
 
 To install command line tool
